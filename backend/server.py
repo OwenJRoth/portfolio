@@ -6,7 +6,7 @@ import os
 import logging
 from pathlib import Path
 from pydantic import BaseModel, Field
-from typing import List
+from typing import List, Optional
 import uuid
 from datetime import datetime
 
@@ -27,6 +27,28 @@ api_router = APIRouter(prefix="/api")
 
 
 # Define Models
+class Project(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    title: str
+    description: str
+    category: str
+    technologies: List[str] = []
+    github_url: Optional[str] = None
+    demo_url: Optional[str] = None
+    image_url: Optional[str] = None
+    featured: bool = False
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+
+class ProjectCreate(BaseModel):
+    title: str
+    description: str
+    category: str
+    technologies: List[str] = []
+    github_url: Optional[str] = None
+    demo_url: Optional[str] = None
+    image_url: Optional[str] = None
+    featured: bool = False
+
 class StatusCheck(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     client_name: str
@@ -38,8 +60,34 @@ class StatusCheckCreate(BaseModel):
 # Add your routes to the router instead of directly to app
 @api_router.get("/")
 async def root():
-    return {"message": "Hello World"}
+    return {"message": "Owen Roth's Portfolio API"}
 
+# Project endpoints
+@api_router.get("/projects", response_model=List[Project])
+async def get_projects():
+    projects = await db.projects.find().to_list(1000)
+    return [Project(**project) for project in projects]
+
+@api_router.get("/projects/{project_id}", response_model=Project)
+async def get_project(project_id: str):
+    project = await db.projects.find_one({"id": project_id})
+    if project:
+        return Project(**project)
+    return {"error": "Project not found"}
+
+@api_router.post("/projects", response_model=Project)
+async def create_project(project_data: ProjectCreate):
+    project_dict = project_data.dict()
+    project_obj = Project(**project_dict)
+    await db.projects.insert_one(project_obj.dict())
+    return project_obj
+
+@api_router.get("/projects/category/{category}", response_model=List[Project])
+async def get_projects_by_category(category: str):
+    projects = await db.projects.find({"category": category}).to_list(1000)
+    return [Project(**project) for project in projects]
+
+# Status check endpoints (keeping existing functionality)
 @api_router.post("/status", response_model=StatusCheck)
 async def create_status_check(input: StatusCheckCreate):
     status_dict = input.dict()
