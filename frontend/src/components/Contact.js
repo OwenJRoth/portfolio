@@ -1,6 +1,50 @@
-import React from 'react';
+import React, { useState } from 'react';
+import emailjs from '@emailjs/browser';
 
 const Contact = () => {
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    message: ''
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState('');
+
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    
+    try {
+      // Replace these with your actual EmailJS credentials
+      await emailjs.send(
+        'service_5q0oxps',       // Get from EmailJS dashboard
+        'template_93ke0ka',      // Get from EmailJS dashboard  
+        {
+          from_name: formData.name,
+          from_email: formData.email,
+          message: formData.message,
+          to_email: 'rotho@umich.edu'  // Your email address
+        },
+        'fpLcQ9x5TUAq3E4h_'        // Get from EmailJS dashboard
+      );
+      
+      setSubmitStatus('success');
+      setFormData({ name: '', email: '', message: '' });
+    } catch (error) {
+      console.error('Email send failed:', error);
+      setSubmitStatus('error');
+    } finally {
+      setIsSubmitting(false);
+      setTimeout(() => setSubmitStatus(''), 5000);
+    }
+  };
   return (
     <section id="contact" className="py-20 bg-gray-800">
       <div className="container mx-auto px-6">
@@ -32,7 +76,7 @@ const Contact = () => {
                     </div>
                     <div>
                       <p className="text-white font-medium">Email</p>
-                      <p className="text-gray-300">owenroth@email.com</p>
+                      <p className="text-gray-300">rotho@umich.edu</p>
                     </div>
                   </div>
                   
@@ -44,8 +88,8 @@ const Contact = () => {
                     </div>
                     <div>
                       <p className="text-white font-medium">GitHub</p>
-                      <a href="https://github.com/owenroth" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300">
-                        github.com/owenroth
+                      <a href="https://github.com/owenjroth" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300">
+                        github.com/OwenJRoth
                       </a>
                     </div>
                   </div>
@@ -58,8 +102,8 @@ const Contact = () => {
                     </div>
                     <div>
                       <p className="text-white font-medium">LinkedIn</p>
-                      <a href="https://linkedin.com/in/owenroth" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300">
-                        linkedin.com/in/owenroth
+                      <a href="https://www.linkedin.com/in/owen-roth-365a632b7/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300">
+                        https://www.linkedin.com/in/owen-roth-365a632b7/
                       </a>
                     </div>
                   </div>
@@ -70,11 +114,28 @@ const Contact = () => {
             {/* Contact Form */}
             <div className="bg-gray-900 p-6 rounded-lg">
               <h3 className="text-2xl font-bold text-white mb-4">Send a Message</h3>
-              <form className="space-y-4">
+              
+              {submitStatus === 'success' && (
+                <div className="mb-4 p-3 bg-green-600 text-white rounded-lg">
+                  ✅ Message sent successfully! I'll get back to you soon.
+                </div>
+              )}
+              
+              {submitStatus === 'error' && (
+                <div className="mb-4 p-3 bg-red-600 text-white rounded-lg">
+                  ❌ Failed to send message. Please try again or email me directly.
+                </div>
+              )}
+              
+              <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
                   <label className="block text-gray-300 mb-2">Name</label>
                   <input
                     type="text"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleChange}
+                    required
                     className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-blue-500"
                     placeholder="Your name"
                   />
@@ -84,6 +145,10 @@ const Contact = () => {
                   <label className="block text-gray-300 mb-2">Email</label>
                   <input
                     type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    required
                     className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-blue-500"
                     placeholder="your.email@example.com"
                   />
@@ -92,6 +157,10 @@ const Contact = () => {
                 <div>
                   <label className="block text-gray-300 mb-2">Message</label>
                   <textarea
+                    name="message"
+                    value={formData.message}
+                    onChange={handleChange}
+                    required
                     rows="4"
                     className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-blue-500"
                     placeholder="Tell me about your project..."
@@ -100,9 +169,14 @@ const Contact = () => {
                 
                 <button
                   type="submit"
-                  className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-medium transition-colors duration-200"
+                  disabled={isSubmitting}
+                  className={`w-full py-3 rounded-lg font-medium transition-colors duration-200 ${
+                    isSubmitting 
+                      ? 'bg-gray-600 text-gray-300 cursor-not-allowed' 
+                      : 'bg-blue-600 hover:bg-blue-700 text-white'
+                  }`}
                 >
-                  Send Message
+                  {isSubmitting ? 'Sending...' : 'Send Message'}
                 </button>
               </form>
             </div>

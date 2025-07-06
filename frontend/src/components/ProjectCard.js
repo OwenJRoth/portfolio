@@ -71,6 +71,22 @@ const ProjectCard = ({ project }) => {
               Live Demo
             </a>
           )}
+          {project.drive_url && (
+            <a
+              href={project.drive_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded text-sm transition-colors duration-200 flex items-center gap-2"
+            >
+              <svg className="w-4 h-4" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M188.8 64L64 278.4 111.2 352h123.2L188.8 64z" fill="#FFC107"/>
+                <path d="M323.2 64H188.8l45.6 74.4L323.2 64z" fill="#4CAF50"/>
+                <path d="M448 278.4L323.2 64 276 138.4 400.8 352 448 278.4z" fill="#2196F3"/>
+                <path d="M111.2 352h289.6L400.8 352 276 138.4 111.2 352z" fill="#1976D2"/>
+              </svg>
+              Drive Link
+            </a>
+          )}
         </div>
       </div>
     </div>

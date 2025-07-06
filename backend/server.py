@@ -34,6 +34,7 @@ class Project(BaseModel):
     category: str
     technologies: List[str] = []
     github_url: Optional[str] = None
+    google_drive_url: Optional[str] = None
     demo_url: Optional[str] = None
     image_url: Optional[str] = None
     featured: bool = False
@@ -45,6 +46,7 @@ class ProjectCreate(BaseModel):
     category: str
     technologies: List[str] = []
     github_url: Optional[str] = None
+    google_drive_url: Optional[str] = None
     demo_url: Optional[str] = None
     image_url: Optional[str] = None
     featured: bool = False
