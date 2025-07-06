@@ -106,7 +106,11 @@ app.include_router(api_router)
 app.add_middleware(
     CORSMiddleware,
     allow_credentials=True,
-    allow_origins=["*"],
+    allow_origins=[
+        "*",  # For development
+        "https://*.github.io",  # For GitHub Pages
+        "https://*.githubusercontent.com",  # For GitHub Pages custom domains
+    ],
     allow_methods=["*"],
     allow_headers=["*"],
 )
