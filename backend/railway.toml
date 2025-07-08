@@ -9,5 +9,5 @@ command = "pip install -r requirements.txt"
 startCommand = "uvicorn server:app --host 0.0.0.0 --port $PORT"
 
 [env]
-MONGO_URL = "REPLACE_WITH_YOUR_MONGODB_ATLAS_URL"
+MONGO_URL = "mongodb+srv://owenroth:zGQ6UH1Z6mJx4S9E@owenrothwebsite.v3pgxzb.mongodb.net/?retryWrites=true&w=majority&appName=OwenRothWebsite"
 DB_NAME = "portfolio"
